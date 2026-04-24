@@ -2,12 +2,15 @@ import requests
 import os
 import logging
 import pandas
+import sys
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QWidget
 
 citydata_path = "./AMap_adcode_citycode_20210406.xlsx"
 
 
 def load_citycode_xlsx(path: str):
-    try: 
+    try:
         xlsx_data = pandas.read_excel(
             path,
             header=None,
@@ -38,7 +41,6 @@ def init_log():
 
 
 class weather_info:
-    api_key = "d854936d46fde377d8ffda03c9e4d906"
     api_url = "https://restapi.amap.com/v3/weather/weatherInfo"
     url_parms: dict
     raw_data: dict
@@ -47,7 +49,7 @@ class weather_info:
     def __init__(self, city_code=None) -> None:
         if city_code == None:
             city_code = self.find_city()
-        self.url_parms = {"key": self.api_key, "city": city_code}
+        self.url_parms = {"key": key, "city": city_code}
         self.raw_data = self.get_data()
         self.weather_data = self.raw_data["lives"][0]
 
@@ -80,13 +82,24 @@ class weather_info:
         print("空气湿度：\t", self.weather_data["humidity"], "%", sep="")
 
 
-if __name__ == "__main__":
-    city_data: pandas.DataFrame = load_citycode_xlsx(citydata_path)
+class GuiPanel(QWidget):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("高德开发平台天气API")
+    def init_UI(self):
+        pass
+
+        
+
+def cli():
+    global city_data
+    global key
+    city_data = load_citycode_xlsx(citydata_path)
     print("""
     API: 高德开发平台 API
     设置系统变量 AMAP_API 为 API
           """)
-    try: 
+    try:
         key = os.environ["AMAP_API"]
     except KeyError:
         print("AMAP_API 不存在")
@@ -94,3 +107,13 @@ if __name__ == "__main__":
     init_log()
     w = weather_info()
     w.print_data()
+
+def gui():
+    app = QApplication(sys.argv)
+    g = GuiPanel()
+    g.show()
+    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    cli()
+
