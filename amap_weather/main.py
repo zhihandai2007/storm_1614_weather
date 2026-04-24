@@ -3,7 +3,7 @@ import os
 import logging
 import pandas
 import sys
-from PyQt5.QtCore import Qt
+import ui
 from PyQt5.QtWidgets import QApplication, QWidget
 
 citydata_path = "./AMap_adcode_citycode_20210406.xlsx"
@@ -74,24 +74,56 @@ class weather_info:
         return data
 
     def print_data(self):
-        print(self.weather_data["province"], ", ", self.weather_data["city"], sep="")
-        print("天气：\t\t", self.weather_data["weather"], sep="")
-        print("气温：\t\t", self.weather_data["temperature"], "°C", sep="")
-        print("风向：\t\t", self.weather_data["winddirection"], sep="")
-        print("风力：\t\t", self.weather_data["windpower"], "级", sep="")
-        print("空气湿度：\t", self.weather_data["humidity"], "%", sep="")
+        print(self.data_str())
+
+    def data_str(self):
+        result_str = (
+            f"{self.weather_data['province']},{self.weather_data['city']}\n"
+            f"天气：\t\t{self.weather_data['weather']}\n"
+            f"气温：\t\t{self.weather_data['temperature']}°C\n"
+            f"风向：\t\t{self.weather_data['winddirection']}\n"
+            f"风力：\t\t{self.weather_data['windpower']}级\n"
+            f"空气湿度：\t\t{self.weather_data['humidity']}%"
+        )
+        return result_str
 
 
-class GuiPanel(QWidget):
+class GuiPanel(QWidget, ui.Ui_Form):
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("高德开发平台天气API")
-    def init_UI(self):
-        pass
+        self.setupUi(self)
+        self.initUI()
 
-        
+    def initUI(self):
+        self.city_edit.returnPressed.connect(self.get_info)
+        self.search_button.clicked.connect(self.get_info)
+
+    def get_info(self):
+        self.info_text.clear()
+        cityName = self.city_edit.text()
+        try:
+            code = city_data[city_data["city"] == cityName]["adcode"].values[0]  # pyright: ignore[reportAttributeAccessIssue]
+            weather = weather_info(code)
+            info = weather.data_str()
+        except IndexError:
+            info = "城市错误"
+        self.info_text.append(info)
 
 def cli():
+    w = weather_info()
+    w.print_data()
+
+
+def gui():
+
+    app = QApplication(sys.argv)
+    g = GuiPanel()
+    g.show()
+    sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
     global city_data
     global key
     city_data = load_citycode_xlsx(citydata_path)
@@ -105,15 +137,4 @@ def cli():
         print("AMAP_API 不存在")
         exit(2)
     init_log()
-    w = weather_info()
-    w.print_data()
-
-def gui():
-    app = QApplication(sys.argv)
-    g = GuiPanel()
-    g.show()
-    sys.exit(app.exec_())
-
-if __name__ == "__main__":
-    cli()
-
+    gui()
