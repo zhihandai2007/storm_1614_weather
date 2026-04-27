@@ -1,6 +1,8 @@
 import requests
 import datetime
 import pandas
+import os
+import sys
 
 from security.account import *  # 导入账户密码
 
@@ -21,7 +23,7 @@ xlsx_data = pandas.read_excel(
     skiprows=1,
 )
 
-station_name = "冷水江"
+station_name = "同安"
 
 code = xlsx_data[xlsx_data["stationName"] == station_name]["code"].values[0]  # pyright: ignore[reportAttributeAccessIssue]
 
@@ -61,7 +63,6 @@ class station_info:
     press_sea: float
     temp: float
     rain_3h: float
-    wep_now_value: float
     relative_humidity: float
     wind_direction_2min: float
     wind_speed_2min: float
@@ -75,26 +76,26 @@ class station_info:
         self.rain_3h = json_data["PRE_3h"]
         self.wind_direction_2min = json_data["WIN_D_Avg_2mi"]
         self.wind_speed_2min = json_data["WIN_S_Avg_2mi"]
-        self.wep_now_value = float(json_data["WEP_Now"])
+        wep_now_value = float(json_data["WEP_Now"])
         self.relative_humidity = float(json_data["RHU"])
         self.vis = float(json_data["VIS"])
-        self.weather_now()
+        self.weather_now(wep_now_value)
 
-    def weather_now(self):
-        if self.wep_now_value == 0.0:
+    def weather_now(self, value):
+        if value == 0.0:
             self.weather = "未观测或观测不到云的发展"
-        elif self.wep_now_value == 1.0:
+        elif value == 1.0:
             self.weather = "从总体上看，云在消散或未发展起来"
-        elif self.wep_now_value == 2.0:
+        elif value == 2.0:
             self.weather = "总的看来天空状态无变化"
-        elif self.wep_now_value == 3.0:
+        elif value == 3.0:
             self.weather = "从总体上看，云在形成或发展"
-        elif self.wep_now_value == 4.0:
+        elif value == 4.0:
             self.weather = "烟雾使能见度降低。如草原或森林火灾，工业排烟或火山灰"
-        elif self.wep_now_value == 5.0:
+        elif value == 5.0:
             self.weather = "霾"
         else:
-            self.weather = f"未知代码：{self.wep_now_value}"
+            self.weather = f"未知代码：{value}"
 
 
 info = station_info(data)
