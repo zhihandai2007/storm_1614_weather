@@ -1,3 +1,5 @@
+#! env /bin/python
+
 import requests
 import datetime
 import pandas
@@ -66,7 +68,7 @@ class station_info:
     relative_humidity: float
     wind_direction_2min: float
     wind_speed_2min: float
-    vis:float
+    vis: float
     weather: str
 
     def __init__(self, json_data) -> None:
@@ -99,6 +101,10 @@ class station_info:
 
 
 info = station_info(data)
+hour = int(data["Hour"]) + 8
+
+if hour > 24:
+    hour -= 24
 
 print(
     data["Year"],
@@ -107,7 +113,7 @@ print(
     "月",
     data["Day"],
     "日",
-    int(data["Hour"]) + 8,
+    hour,
     "时",
     sep="",
 )
@@ -119,5 +125,5 @@ print("相对湿度：", info.relative_humidity, sep="")
 print("2分钟平均风速：", info.wind_speed_2min, " m/s", sep="")
 print("2分钟平均风向：", info.wind_direction_2min, sep="")
 print("3小时降水量：", info.rain_3h, sep="")
-print("水平能见度：", info.vis, " m",sep="")
+print("水平能见度：", info.vis, " m", sep="")
 print(info.weather)
