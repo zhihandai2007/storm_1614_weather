@@ -1,5 +1,3 @@
-#! env /bin/python
-
 import requests
 import datetime
 import pandas
@@ -68,7 +66,7 @@ class station_info:
     relative_humidity: float
     wind_direction_2min: float
     wind_speed_2min: float
-    vis: float
+    vis:float
     weather: str
 
     def __init__(self, json_data) -> None:
@@ -98,15 +96,13 @@ class station_info:
             self.weather = "霾"
         elif value == 6.0:
             self.weather = "在空气中悬浮大范围的尘土，这些尘土不是由观测时测站或附近的风吹起的。"
+        elif value==7.0:
+            self.weather="观测时在测站或附近有风吹起的尘或沙，但无发展成熟的尘旋或沙旋，而且看不到尘暴或沙暴，或海洋站和沿海测站出现高吹飞沫"
         else:
             self.weather = f"未知代码：{value}"
 
 
 info = station_info(data)
-hour = int(data["Hour"]) + 8
-
-if hour > 24:
-    hour -= 24
 
 print(
     data["Year"],
@@ -115,7 +111,7 @@ print(
     "月",
     data["Day"],
     "日",
-    hour,
+    int(data["Hour"]) + 8,
     "时",
     sep="",
 )
@@ -127,5 +123,5 @@ print("相对湿度：", info.relative_humidity, sep="")
 print("2分钟平均风速：", info.wind_speed_2min, " m/s", sep="")
 print("2分钟平均风向：", info.wind_direction_2min, sep="")
 print("3小时降水量：", info.rain_3h, sep="")
-print("水平能见度：", info.vis, " m", sep="")
+print("水平能见度：", info.vis, " m",sep="")
 print(info.weather)
