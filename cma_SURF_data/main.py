@@ -94,6 +94,8 @@ class station_info:
             self.weather = "烟雾使能见度降低。如草原或森林火灾，工业排烟或火山灰"
         elif value == 5.0:
             self.weather = "霾"
+        elif value == 6.0:
+            self.weather = "在空气中悬浮大范围的尘土，这些尘土不是由观测时测站或附近的风吹起的。"
         else:
             self.weather = f"未知代码：{value}"
 
