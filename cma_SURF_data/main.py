@@ -98,6 +98,8 @@ class station_info:
             self.weather = "霾"
         elif value == 6.0:
             self.weather = "在空气中悬浮大范围的尘土，这些尘土不是由观测时测站或附近的风吹起的。"
+        elif value==7.0:
+            self.weather="观测时在测站或附近有风吹起的尘或沙，但无发展成熟的尘旋或沙旋，而且看不到尘暴或沙暴，或海洋站和沿海测站出现高吹飞沫"
         else:
             self.weather = f"未知代码：{value}"
 
