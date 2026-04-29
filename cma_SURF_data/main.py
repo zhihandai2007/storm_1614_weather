@@ -84,24 +84,27 @@ class station_info:
         self.weather_now(wep_now_value)
 
     def weather_now(self, value):
-        if value == 0.0:
-            self.weather = "未观测或观测不到云的发展"
-        elif value == 1.0:
-            self.weather = "从总体上看，云在消散或未发展起来"
-        elif value == 2.0:
-            self.weather = "总的看来天空状态无变化"
-        elif value == 3.0:
-            self.weather = "从总体上看，云在形成或发展"
-        elif value == 4.0:
-            self.weather = "烟雾使能见度降低。如草原或森林火灾，工业排烟或火山灰"
-        elif value == 5.0:
-            self.weather = "霾"
-        elif value == 6.0:
-            self.weather = "在空气中悬浮大范围的尘土，这些尘土不是由观测时测站或附近的风吹起的。"
-        elif value==7.0:
-            self.weather="观测时在测站或附近有风吹起的尘或沙，但无发展成熟的尘旋或沙旋，而且看不到尘暴或沙暴，或海洋站和沿海测站出现高吹飞沫"
-        else:
-            self.weather = f"未知代码：{value}"
+        match value:
+            case 0.0:
+                self.weather = "未观测或观测不到云的发展"
+            case 1.0:
+                self.weather = "从总体上看，云在消散或未发展起来"
+            case 2.0:
+                self.weather = "总的看来天空状态无变化"
+            case 3.0:
+                self.weather = "从总体上看，云在形成或发展"
+            case 4.0:
+                self.weather = "烟雾使能见度降低。如草原或森林火灾，工业排烟或火山灰"
+            case 5.0:
+                self.weather = "霾"
+            case 6.0:
+                self.weather = "在空气中悬浮大范围的尘土，这些尘土不是由观测时测站或附近的风吹起的。"
+            case 7.0:
+                self.weather = "观测时在测站或附近有风吹起的尘或沙，但无发展成熟的尘旋或沙旋，而且看不到尘暴或沙暴，或海洋站和沿海测站出现高吹飞沫"
+            case 8.0:
+                self.weather = "观测时或前1小时内在测站附近看到发展起来的尘旋或沙旋，但无尘暴或沙暴。"
+            case _:
+                self.weather = f"未知代码：{value}"
 
 
 info = station_info(data)
